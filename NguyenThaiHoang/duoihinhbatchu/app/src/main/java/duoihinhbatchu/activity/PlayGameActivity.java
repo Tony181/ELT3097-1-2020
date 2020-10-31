@@ -490,5 +490,132 @@ public class PlayGameActivity extends AppCompatActivity implements RewardedVideo
         dialog.show();
     }
 
+    private void makeAddText() {
+        if (scoreRuby >= 5) {
+            scoreRuby = scoreRuby - 5;
+            tvRuby.setText(String.valueOf(scoreRuby));
+            if (countDapAn < dapAn.length()) {
+                if (textViewsDapAn.get(countHelp).getText().toString().equals("")) {
+                    countDapAn = countDapAn + 1;
+                    textViewsDapAn.get(countHelp).setText(dapAn.charAt(countHelp) + "");
+                } else {
+                    textViewsDapAn.get(countHelp).setText(dapAn.charAt(countHelp) + "");
+                }
+                textViewsDapAn.get(countHelp).setTextColor(ContextCompat.getColor(PlayGameActivity.this, R.color.red_A700));
+                listViewDapAn.get(countHelp).setClickable(false);
+                for (int i = 0; i < goiY.length(); i++) {
+                    if (textViewsDapAn.get(countHelp).getText().equals(textViewsGoiY.get(i).getText())) {
+                        listViewGoiY.get(i).setVisibility(View.INVISIBLE);
+                        break;
+                    }
+                }
+                String selectDapAn = "";
+                for (int i = 0; i < dapAn.length(); i++) {
+                    selectDapAn += textViewsDapAn.get(i).getText();
+                }
+                if (countDapAn == dapAn.length()) {
+                    if (dapAn.equals(selectDapAn)) {
+                        scoreRuby = scoreRuby + 5;
+                        tvRuby.setText(String.valueOf(scoreRuby));
+                        questionCount = questionCount + 1;
+                        Toast.makeText(this, "Ban tra loi dung", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(PlayGameActivity.this, ResultActivity.class);
+                        intent.putExtra(Const.KEY_QUESTION, questionCount);
+                        intent.putExtra(Const.KEY_RESULT, ketQua);
+                        intent.putExtra(Const.KEY_RUBY, scoreRuby);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        if (scoreRuby >= 5) {
+                            scoreRuby = scoreRuby - 5;
+                        }
+                        tvResult.setVisibility(View.VISIBLE);
+                        PlayMusic.playWrong(getApplicationContext());
+                        Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
+                        tvResult.startAnimation(anim);
+                        YoYo.with(Techniques.Shake)
+                                .duration(1000)
+                                .playOn(tvResult);
+                        YoYo.with(Techniques.Shake)
+                                .duration(1000)
+                                .playOn(layoutDapan);
+                    }
+                }
+                countHelp = countHelp + 1;
+            }
+        } else {
+            Toast.makeText(this, "Bạn không đủ ruby để được gợi ý", Toast.LENGTH_SHORT).show();
+        }
 
-  
+    }
+
+    private void makeDapAn(int position) {
+        if (countDapAn > 0) {
+            countDapAn = countDapAn - 1;
+        }
+        textViewsDapAn.get(position).setText("");
+        if (textViewsDapAn.get(position).getTag() != null) {
+            int positionTag = Integer.parseInt(textViewsDapAn.get(position).getTag().toString());
+            listViewGoiY.get(positionTag).setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void makeGoiY(int position) {
+        if (countDapAn < dapAn.length()) {
+            countDapAn = countDapAn + 1;
+            listViewGoiY.get(position).setVisibility(View.INVISIBLE);
+            for (int i = 0; i < dapAn.length(); i++) {
+                if (textViewsDapAn.get(i).getText().equals("")) {
+                    textViewsDapAn.get(i).setText(textViewsGoiY.get(position).getText());
+                    textViewsDapAn.get(i).setTag(position);
+                    break;
+                }
+            }
+            String selectDapAn = "";
+            for (int i = 0; i < dapAn.length(); i++) {
+                selectDapAn += textViewsDapAn.get(i).getText();
+            }
+            if (countDapAn == dapAn.length()) {
+                if (dapAn.equals(selectDapAn)) {
+                    scoreRuby = scoreRuby + 5;
+                    questionCount = questionCount + 1;
+                    PlayMusic.playTrue(getApplicationContext());
+                    YoYo.with(Techniques.Pulse)
+                            .duration(1500)
+                            .playOn(findViewById(R.id.layout_dapan));
+
+                    YoYo.with(Techniques.Flash)
+                            .duration(1500)
+                            .playOn(findViewById(R.id.layout_dapan));
+                    final Intent intent = new Intent(PlayGameActivity.this, ResultActivity.class);
+                    intent.putExtra(Const.KEY_QUESTION, questionCount);
+                    intent.putExtra(Const.KEY_RESULT, ketQua);
+                    intent.putExtra(Const.KEY_RUBY, scoreRuby);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startActivity(intent);
+                        }
+                    }, 1000);
+                } else {
+                    if (scoreRuby >= 5) {
+                        scoreRuby = scoreRuby - 5;
+                        tvRuby.setText(scoreRuby + "");
+                    }
+                    tvResult.setVisibility(View.VISIBLE);
+                    PlayMusic.playWrong(getApplicationContext());
+                    Animation anim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
+                    tvResult.startAnimation(anim);
+                    YoYo.with(Techniques.Shake)
+                            .duration(1000)
+                            .playOn(tvResult);
+                    YoYo.with(Techniques.Shake)
+                            .duration(1000)
+                            .playOn(layoutDapan);
+                }
+            }
+        }
+
+    }
+
+   
