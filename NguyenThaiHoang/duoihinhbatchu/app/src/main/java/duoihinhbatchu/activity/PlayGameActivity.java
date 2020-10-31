@@ -519,7 +519,7 @@ public class PlayGameActivity extends AppCompatActivity implements RewardedVideo
                         tvRuby.setText(String.valueOf(scoreRuby));
                         questionCount = questionCount + 1;
                         Toast.makeText(this, "Ban tra loi dung", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(PlayGameActivity.this, ResultActivity.class);
+                        Intent intent = new Intent(PlayGameActivity.this, nhom6.com.duoihinhbatchu.activity.ResultActivity.class);
                         intent.putExtra(Const.KEY_QUESTION, questionCount);
                         intent.putExtra(Const.KEY_RESULT, ketQua);
                         intent.putExtra(Const.KEY_RUBY, scoreRuby);
@@ -587,7 +587,7 @@ public class PlayGameActivity extends AppCompatActivity implements RewardedVideo
                     YoYo.with(Techniques.Flash)
                             .duration(1500)
                             .playOn(findViewById(R.id.layout_dapan));
-                    final Intent intent = new Intent(PlayGameActivity.this, ResultActivity.class);
+                    final Intent intent = new Intent(PlayGameActivity.this, nhom6.com.duoihinhbatchu.activity.ResultActivity.class);
                     intent.putExtra(Const.KEY_QUESTION, questionCount);
                     intent.putExtra(Const.KEY_RESULT, ketQua);
                     intent.putExtra(Const.KEY_RUBY, scoreRuby);
@@ -618,4 +618,97 @@ public class PlayGameActivity extends AppCompatActivity implements RewardedVideo
 
     }
 
-   
+    @Override
+    public void onBackPressed() {
+        makeBack();
+    }
+
+    private void makeBack() {
+        AlertDialog dialog = new AlertDialog.Builder(PlayGameActivity.this)
+                .setTitle("Xác nhận")
+                .setMessage("Bạn có chắc chắn muốn thoát ?")
+                .setNegativeButton("Có", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                        Intent intent = new Intent(PlayGameActivity.this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                                Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                })//setPositiveButton
+                .setPositiveButton("Không", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                })//setNegativeButton
+                .create();
+        dialog.show();
+    }
+
+    @Override
+    public void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+        SharePreferenceUtils.insertIntData(PlayGameActivity.this, Const.KEY_SHARE_RUBY, scoreRuby);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+
+        super.onDestroy();
+
+    }
+
+
+    @Override
+    public void onRewardedVideoAdLoaded() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdOpened() {
+
+    }
+
+    @Override
+    public void onRewardedVideoStarted() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdClosed() {
+        loadRewardedVideoAd();
+    }
+
+    @Override
+    public void onRewarded(RewardItem rewardItem) {
+        scoreRuby = scoreRuby + 5;
+        tvRuby.setText(String.valueOf(scoreRuby));
+        loadRewardedVideoAd();
+    }
+
+    @Override
+    public void onRewardedVideoAdLeftApplication() {
+
+    }
+
+    @Override
+    public void onRewardedVideoAdFailedToLoad(int i) {
+
+    }
+}
